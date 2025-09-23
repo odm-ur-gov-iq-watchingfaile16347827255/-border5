@@ -1,58 +1,48 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>مولّد QR</title>
-  <link href="bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background:#f8f9fa; font-family:Tahoma; }
-    .container { max-width:500px; margin-top:50px; }
-    #qrcode { margin-top:20px; text-align:center; }
-  </style>
+  <title>مولّد وقارئ QR</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
-<body>
-  <div class="container">
-    <h2 class="mb-3 text-center">🔗 توليد QR Code</h2>
+<body style="text-align:center; font-family:Arial">
+  <h2>مولّد وقارئ QR</h2>
 
-    <div class="input-group mb-3">
-      <input id="text" type="text" class="form-control" placeholder="أدخل رابط أو نص">
-      <button id="generate" class="btn btn-primary">إنشاء</button>
-    </div>
-
-    <div id="qrcode"></div>
+  <!-- مولّد -->
+  <div>
+    <input id="text" value="أنا أحب العراق" />
+    <button onclick="generate()">توليد</button>
+    <div id="qrcode" style="margin:20px;"></div>
   </div>
 
-  <!-- مكتبة jQuery -->
-  <script src="jquery.slim.min.js"></script>
-  <!-- مكتبة QRCode.js -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  
+  <hr />
+
+  <!-- قارئ -->
+  <div>
+    <h3>امسح الباركود</h3>
+    <div id="reader" style="width:300px; margin:auto;"></div>
+    <p id="result"></p>
+  </div>
+
   <script>
-    $(function() {
-      const qrContainer = document.getElementById("qrcode");
-      let qr = null;
+    // توليد باركود
+    function generate() {
+      let container = document.getElementById("qrcode");
+      container.innerHTML = "";
+      let text = document.getElementById("text").value;
+      new QRCode(container, { text: text, width: 200, height: 200 });
+    }
+    generate();
 
-      $("#generate").on("click", function() {
-        const text = $("#text").val().trim();
-        if (!text) {
-          alert("⚠️ الرجاء إدخال نص أو رابط");
-          return;
-        }
+    // قارئ باركود
+    function onScanSuccess(decodedText) {
+      document.getElementById("result").innerText = "✅ المحتوى: " + decodedText;
+    }
 
-        // تنظيف القديم
-        qrContainer.innerHTML = "";
-
-        // توليد جديد
-        qr = new QRCode(qrContainer, {
-          text: text,
-          width: 256,
-          height: 256,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.H
-        });
-      });
-    });
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+      "reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
   </script>
 </body>
 </html>
