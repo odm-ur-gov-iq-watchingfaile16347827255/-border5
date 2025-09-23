@@ -1,48 +1,34 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <title>مولّد وقارئ QR</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-</head>
-<body style="text-align:center; font-family:Arial">
-  <h2>مولّد وقارئ QR</h2>
-
-  <!-- مولّد -->
-  <div>
-    <input id="text" value="أنا أحب العراق" />
-    <button onclick="generate()">توليد</button>
-    <div id="qrcode" style="margin:20px;"></div>
-  </div>
-
-  <hr />
-
-  <!-- قارئ -->
-  <div>
-    <h3>امسح الباركود</h3>
-    <div id="reader" style="width:300px; margin:auto;"></div>
-    <p id="result"></p>
-  </div>
-
-  <script>
-    // توليد باركود
-    function generate() {
-      let container = document.getElementById("qrcode");
-      container.innerHTML = "";
-      let text = document.getElementById("text").value;
-      new QRCode(container, { text: text, width: 200, height: 200 });
-    }
-    generate();
-
-    // قارئ باركود
-    function onScanSuccess(decodedText) {
-      document.getElementById("result").innerText = "✅ المحتوى: " + decodedText;
-    }
-
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-      "reader", { fps: 10, qrbox: 250 });
-    html5QrcodeScanner.render(onScanSuccess);
-  </script>
-</body>
-</html>
+qr-auth-project/
+│
+├── frontend/                 # واجهة المستخدم
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── QrReader.vue       # مكوّن قارئ الباركود
+│   │   │   ├── QrGenerator.vue    # مكوّن مولّد الباركود (اختياري)
+│   │   │   ├── ResultCard.vue     # مكوّن عرض نتيجة التحقق
+│   │   ├── views/
+│   │   │   ├── Home.vue           # صفحة البداية
+│   │   │   ├── VerifyFlow.vue     # صفحة التدفق (OAuth-like)
+│   │   ├── App.vue
+│   │   └── main.js
+│   ├── package.json
+│   └── vite.config.js
+│
+├── backend/                  # السيرفر (API)
+│   ├── src/
+│   │   ├── routes/
+│   │   │   ├── auth.js          # يستقبل الكود ويتعامل مع بوابة ur.gov.iq
+│   │   │   └── qr.js            # API بسيط لتوليد/قراءة QR (اختياري)
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   └── qrController.js
+│   │   ├── app.js              # نقطة تشغيل Express
+│   │   └── config.js           # إعدادات (client_id, secret, endpoints)
+│   ├── package.json
+│   └── server.js
+│
+├── docs/                      # توثيق التدفق
+│   ├── flow-diagram.png
+│   └── api-spec.md
+│
+└── README.md
